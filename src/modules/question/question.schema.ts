@@ -22,9 +22,13 @@ export const Question = Type.Composite([
     })
 ]);
 
+// id: Type.Unsafe<number>(
+//     Type.Optional(Type.Number({ default: 1 }))
+//   ),
+
 type QuestionResponse = Static<typeof QuestionResponse>;
 export const QuestionResponse = Type.Object({
-    id: Type.Number({ minimum: 1 }),
+    id: Type.Number({ example: 1, description: "Entity's id", }), 
     question: Type.String(),
     optionA: Type.String(),
     optionB: Type.String(),

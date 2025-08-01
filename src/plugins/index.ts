@@ -2,7 +2,7 @@ import { FastifyInstance } from 'fastify';
 
 import fastifyPlugin from 'fastify-plugin';
 import config from './config';
-import drizzlePlugin from './drizzle';
+// import drizzlePlugin from './drizzle';
 import sensible from './sensible';
 import redis from './redis';
 import swagger from './swagger';

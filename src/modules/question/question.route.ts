@@ -2,6 +2,7 @@ import { FastifyInstance } from 'fastify';
 import { QuestionResponse } from "./question.schema";
 import QuestionController from './question.controller';
 import QuestionService from './question.service';
+import { Type } from '@sinclair/typebox';
 
 export default async (fastify: FastifyInstance) => {
 	const questionController = new QuestionController(new QuestionService());
@@ -12,7 +13,7 @@ export default async (fastify: FastifyInstance) => {
 			schema: {
 				tags: ['Question'],
 				response: {
-					200: QuestionResponse,
+					200: Type.Array(QuestionResponse),
 				},
 			},
 		},

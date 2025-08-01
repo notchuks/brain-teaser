@@ -17,7 +17,7 @@ export default class QuestionController {
 	) {
 		try {
 			const questions = await this.questionService.getQuestions();
-			console.log("Questions: ", questions);
+			// console.log("Questions: ", questions);
 
 			return reply.code(200).send(questions);
 		} catch (e) {
