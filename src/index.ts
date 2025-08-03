@@ -26,6 +26,12 @@ const getLoggerConfig = () => {
 export async function build() {
 	const fastify = Fastify({
 		logger: getLoggerConfig(),
+		ignoreDuplicateSlashes: true,
+		ajv: {
+      customOptions: {
+        keywords: ['example'],
+      },
+    },
 	});
 
 	const startPlugins = performance.now();

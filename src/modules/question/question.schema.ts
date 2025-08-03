@@ -1,4 +1,5 @@
 import { Type, Static } from "@sinclair/typebox";
+import { paginatedQueryRequestDtoSchema } from "../../shared/api/paginated-query.request.dto";
 
 export type Question = Static<typeof Question>
 export const questionCore = Type.Object({
@@ -11,6 +12,7 @@ export const questionCore = Type.Object({
     answer: Type.String(),
     category: Type.String(),
     region: Type.String(),
+    difficulty: Type.String(),
     year: Type.String(),
 })
 
@@ -37,6 +39,7 @@ export const QuestionResponse = Type.Object({
     answer: Type.String(),
     category: Type.String(),
     region: Type.String(),
+    difficulty: Type.String(),
     year: Type.String(),
     createdAt: Type.String({ format: 'date-time' }),
     updatedAt: Type.String({ format: 'date-time' }),
@@ -54,6 +57,37 @@ export const questionRequestSchema = Type.Object({
     answer: Type.String(),
     category: Type.String(),
     region: Type.String(),
+    difficulty: Type.String(),
     year: Type.String(),
 });
 export type QuestionRequestSchema = Static<typeof questionRequestSchema>;
+
+export const findQuestionsRequestDtoSchema = Type.Composite([
+  paginatedQueryRequestDtoSchema,
+  Type.Object({
+    category: Type.Optional(
+      Type.String({
+        example: 'Politics',
+        description: 'Question Category',
+        maxLength: 50,
+        pattern: '',
+      }),
+    ),
+    region: Type.Optional(
+      Type.String({
+        example: 'Nigeria',
+        description: 'Question region origin',
+        maxLength: 50,
+        pattern: '',
+      }),
+    ),
+    difficulty: Type.Optional(
+      Type.String({
+        example: 'Hard',
+        description: 'Question Difficulty',
+        maxLength: 50,
+        pattern: '',
+      }),
+    ),
+  }),
+]);
