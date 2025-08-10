@@ -31,4 +31,11 @@ export class QuizController {
     await QuizService.deleteQuiz(Number(request.params["id"]));
     reply.code(204).send();
   }
+
+  static async submitAnswerHandler(request: FastifyRequest, reply: FastifyReply) {
+    const quizId = Number(request.params["id"]);
+    const { userId, answer } = request.body as any;
+    const result = await QuizService.submitAnswer({ quizId, userId, answer });
+    reply.send(result);
+  }
 }

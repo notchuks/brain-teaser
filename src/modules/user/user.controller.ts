@@ -27,4 +27,13 @@ export class UserController {
     await UserService.deleteUser(Number(request.params["id"]));
     reply.code(204).send();
   }
+
+  static async leaderboard(request: FastifyRequest, reply: FastifyReply) {
+    const { page = 1, pageSize = 10 } = request.query as any;
+    const result = await UserService.getLeaderboard({
+      page: Number(page) || 1,
+      pageSize: Number(pageSize) || 10,
+    });
+    reply.send(result);
+  }
 }
