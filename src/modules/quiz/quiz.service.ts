@@ -2,6 +2,64 @@ import { db } from "../../db/index";
 import { quizzes, quizQuestions, questions } from "../../../drizzle/schema";
 import { eq, and, inArray } from "drizzle-orm";
 import { quizAnswers, users } from "../../../drizzle/schema";
+import { getSession, setSession, clearSession, QuizSession, Question } from '../../shared/session';
+import { sendSms } from '../../shared/sms';
+import { questions as dbQuestions } from '../../../drizzle/schema';
+
+// Utility to get 10 random questions from DB
+async function getRandomQuestions(): Promise<Question[]> {
+  // You may want to filter by category/difficulty, etc.
+  const rows = await db.select().from(dbQuestions).limit(10);
+  return rows.map((q: any) => ({
+    id: q.id,
+    text: q.question,
+    options: [q.optionA, q.optionB, q.optionC, q.optionD],
+    correctAnswer: q.answer,
+  }));
+}
+
+export class SmsQuizService {
+  static async startQuiz(phoneNumber: string) {
+    const questions = await getRandomQuestions();
+    const session: QuizSession = {
+      phoneNumber,
+      currentQuestionIndex: 0,
+      questions,
+      currentScore: 0,
+      isCompleted: false,
+      aggregateScore: 0,
+    };
+    setSession(phoneNumber, session);
+    return questions[0];
+  }
+
+  static async processAnswer(phoneNumber: string, answer: string) {
+    const session = getSession(phoneNumber);
+    if (!session || session.isCompleted) {
+      return { error: 'No active quiz session. Send START to begin.' };
+    }
+    const currentQ = session.questions[session.currentQuestionIndex];
+    const isCorrect = currentQ.correctAnswer.trim().toUpperCase() === answer.trim().toUpperCase();
+    if (isCorrect) session.currentScore += 1;
+    session.currentQuestionIndex += 1;
+    let done = false;
+    if (session.currentQuestionIndex >= session.questions.length) {
+      session.isCompleted = true;
+      session.aggregateScore += session.currentScore;
+      done = true;
+      clearSession(phoneNumber);
+    } else {
+      setSession(phoneNumber, session);
+    }
+    return {
+      correct: isCorrect,
+      nextQuestion: done ? null : session.questions[session.currentQuestionIndex],
+      done,
+      score: session.currentScore,
+      aggregateScore: session.aggregateScore,
+    };
+  }
+}
 
 export class QuizService {
   static async createQuiz(data: { userId: number; category: string; difficulty: string }) {
