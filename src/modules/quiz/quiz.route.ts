@@ -25,8 +25,16 @@ export default async function quizRoutes(app: FastifyInstance) {
     }
     let responseMsg = '';
 
-    if (message.trim().toUpperCase() === 'START') {
+    if (message.trim().toUpperCase() === 'BTD') { // Brain Teaser Daily "Start"
       await sendSms({ to: from, message: "Welcome to Brain Teaser! Answer simple questions and stand a chance to win fantastic prizes." });
+      const firstQ = await SmsQuizService.startQuiz(from);
+      responseMsg = `Quiz started!\nQ1: ${firstQ.text}\nA) ${firstQ.options[0]}\nB) ${firstQ.options[1]}\nC) ${firstQ.options[2]}\nD) ${firstQ.options[3]}`;
+    } else if (message.trim().toUpperCase() === 'BTW') {
+      await sendSms({ to: from, message: "Welcome to Brain Teaser Weekly! Answer simple questions and stand a chance to win fantastic prizes." });
+      const firstQ = await SmsQuizService.startQuiz(from);
+      responseMsg = `Quiz started!\nQ1: ${firstQ.text}\nA) ${firstQ.options[0]}\nB) ${firstQ.options[1]}\nC) ${firstQ.options[2]}\nD) ${firstQ.options[3]}`;
+    } else if (message.trim().toUpperCase() === 'BTM') {
+      await sendSms({ to: from, message: "Welcome to Brain Teaser Monthly! Answer simple questions and stand a chance to win fantastic prizes." });
       const firstQ = await SmsQuizService.startQuiz(from);
       responseMsg = `Quiz started!\nQ1: ${firstQ.text}\nA) ${firstQ.options[0]}\nB) ${firstQ.options[1]}\nC) ${firstQ.options[2]}\nD) ${firstQ.options[3]}`;
     } else {
